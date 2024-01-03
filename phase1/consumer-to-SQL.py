@@ -12,14 +12,12 @@ class XactionConsumer:
             bootstrap_servers=['localhost:9092'],
             # auto_offset_reset='earliest',
             value_deserializer=lambda m: loads(m.decode('ascii')))
-        ## These are two python dictionaries
+        # These are two python dictionaries
         # Ledger is the one where all the transaction get posted
         self.ledger = {}
-        # custBalances is the one where the current blance of each customer
-        # account is kept.
+        # custBalances is the one where the current balance of each customer account is kept.
         self.custBalances = {}
-        # THE PROBLEM is every time we re-run the Consumer, ALL our customer
-        # data gets lost!
+        # THE PROBLEM is every time we re-run the Consumer, ALL our customer data gets lost!
         # add a way to connect to your database here.
         self.db = Session()
 
@@ -30,6 +28,8 @@ class XactionConsumer:
             self.ledger[message['custid']] = message
             # add message to the transaction table in your SQL using SQLalchemy
             self.addTransaction(message)
+            # add or update the customers balance for each transaction
+            self.calculateBalance(message)
             if message['custid'] not in self.custBalances:
                 self.custBalances[message['custid']] = 0
             if message['type'] == 'dep':
@@ -57,7 +57,7 @@ class XactionConsumer:
             if message['type'] == 'dep':
                 is_cust.balance += message['amt']
             else:
-                is_cust.blaance -= message['amt']
+                is_cust.balance -= message['amt']
             db.commit()
         else:
             if message['type'] == 'dep':

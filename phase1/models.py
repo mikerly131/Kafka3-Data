@@ -7,7 +7,7 @@ class Transaction(Base):
 
     id = Column(Integer, primary_key=True)
     custid = Column(Integer)
-    type = Column(String(250), nullable=False)
+    type = Column(String(10), nullable=False)
     date = Column(Integer)
     amt = Column(Integer)
 
@@ -16,5 +16,5 @@ class Balance(Base):
     __tablename__ = 'balances'
 
     id = Column(Integer, primary_key=True)
-    custid = Column(Integer)
-    balance = Column(BigInteger)
+    custid = Column(Integer, unique=True)
+    balance = Column(Integer)
