@@ -29,8 +29,8 @@ class LimitConsumer:
                 self.custBalances[message['custid']] -= message['amt']
             self.determineViolations()
             # Need to figure out which customers are over a certain
-            
+
     def determineViolations(self):
-        violators = [cust['custid'] for cust in self.custBalances if cust['amt'] <= self.balanceLimit]
+        violators = [custid for custid, balance in self.custBalances.items() if balance <= self.balanceLimit]
         print(f"Customer who are in violation of minimum balance ( {self.balanceLimit} ): {violators}")
 
